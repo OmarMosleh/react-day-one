@@ -4,38 +4,41 @@ import User from "./components/User";
 import { useEffect } from "react";
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [seconds, setSecondes] =useState(0)
-  const [userName, setUserName] =useState("omar")
-  useEffect(() => {
-    console.log("hello from effect");
-  },[]);
+  const [products, setProducts] = useState([
+    { id: 1, name: "laptop", price: 20000, inStock: true },
+    { id: 2, name: "iphone", price: 40000, inStock: false },
+    { id: 3, name: "Tv", price: 70000, inStock: true },
+  ]);
 
 
-
-  useEffect(()=>{
-    const interval =setInterval(()=>{
-        setSecondes((prevSeconds)=> prevSeconds + 1)
-    },1000)
-
-    return () => clearInterval(interval); // to stop the interval when the component unmount
-  },[])
-  // without [] ==> with each rerender --not recommended
-  // with [] ==> with first rerender Only --ex. get allusers
-  // with [dependency] ==> whenever this dependency change 
-
-
-  const increaseCount = () => {
-    setCount((prevCount) => prevCount + 1);
-  };
+  const toggleStock = (wantedId) =>{
+    setProducts((prevProducts)=> 
+      prevProducts.map((product)=>
+      product.id === wantedId ? {...product, inStock: !product.inStock} : product
+      )
+    )
+  }
 
   return (
     <>
-      <h1>{userName}</h1>
-      <button onClick={increaseCount}>increase count</button>
-      <h1>Hello effect</h1>
-      <h1>{count}</h1>
-      <h1>Seconds : {seconds}</h1>
+      <h2>My products</h2>
+      <ul>
+        {products.map((product) => (
+          <section style={{ marginBottom: "2rem" }} key={product.id}>
+            <li>
+              <h1>{product.name}</h1>
+              <button type="button" onClick={()=>toggleStock(product.id)}>
+                {product.inStock ? <h3 style={{color:"red"}}> Mark out of Stock </h3> : <h3 style={{color:"green"}}> mark In Stock</h3>}
+              </button>
+              <h2>${product.price}</h2>
+              {!product.inStock && product.price === 70000 &&(
+                  <span style={{color:"red"}}>SOLD OUT</span>
+                )
+              }
+            </li>
+          </section>
+        ))}
+      </ul>
     </>
   );
 }
